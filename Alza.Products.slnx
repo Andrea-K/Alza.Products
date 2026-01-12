@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Alza.Products.Application/Alza.Products.Application.csproj" />
+  <Project Path="Alza.Products.Domain/Alza.Products.Domain.csproj" />
+  <Project Path="Alza.Products.Infrastructure/Alza.Products.Infrastructure.csproj" />
+  <Project Path="Alza.Products.WebApi/Alza.Products.WebApi.csproj" />
+</Solution>
