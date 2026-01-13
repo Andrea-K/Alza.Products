@@ -33,6 +33,19 @@ namespace Alza.Products.WebApi.Controllers
         }
 
         /// <summary>
+        /// Returns paginated list of products (default page size = 10).
+        /// </summary>
+        [HttpGet]
+        [MapToApiVersion("2.0")]
+        [ProducesResponseType(typeof(PagedResult<ProductDto>), StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<ProductDto>>> GetPaged([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        {
+            var products = await _service.GetAllProductsPagedAsync(page, pageSize);
+
+            return Ok(products); // 200
+        }
+
+        /// <summary>
         /// Returns product by ID
         /// </summary>
         [HttpGet("{id}")]

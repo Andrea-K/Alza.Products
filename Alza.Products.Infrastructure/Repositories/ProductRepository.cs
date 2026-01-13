@@ -26,7 +26,24 @@ namespace Alza.Products.Infrastructure.Repositories
             return products;
         }
 
-        // TODO: add GetAllProductsAsync v2
+        // v2
+        public async Task<IEnumerable<Product>> GetAllProductsPagedAsync(int page, int pageSize)
+        {
+            var products = await _dbContext.Products
+                .AsNoTracking()
+                .OrderBy(x => x.Id)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return products;
+        }
+
+        // v2
+        public async Task<int> GetTotalCountAsync()
+        {
+            return await _dbContext.Products.CountAsync();
+        }
 
         public async Task<Product?> GetProductByIdAsync(Guid id)
         {

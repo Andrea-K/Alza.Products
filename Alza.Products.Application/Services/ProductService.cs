@@ -23,7 +23,23 @@ namespace Alza.Products.Application.Services
             return products.Select(ProductMappings.MapToDto);
         }
 
-        // TODO: add GetAllProductsAsync v2
+        // v2
+        public async Task<PagedResult<ProductDto>> GetAllProductsPagedAsync(int page, int pageSize)
+        {
+            page = page < 1 ? 1 : page;
+            pageSize = pageSize < 1 || pageSize > 100 ? 10 : pageSize;
+
+            var items = await _repository.GetAllProductsPagedAsync(page, pageSize);
+            var total = await _repository.GetTotalCountAsync();
+
+            return new PagedResult<ProductDto>
+            {
+                Items = items.Select(ProductMappings.MapToDto).ToList(),
+                Page = page,
+                PageSize = pageSize,
+                TotalCount = total
+            };
+        }
 
         public async Task<ProductDto?> GetProductByIdAsync(Guid id)
         {
