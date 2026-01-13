@@ -1,9 +1,11 @@
-using Microsoft.OpenApi;
+using Alza.Products.Infrastructure.Context;
 using Asp.Versioning;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi;
 
 public partial class Program
 {
-    private static void Main(string[] args)
+    private static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
@@ -40,6 +42,9 @@ public partial class Program
                 options.SubstituteApiVersionInUrl = true;
             });
 
+        builder.Services.AddDbContext<ProductDbContext>(options => options
+            .UseSqlServer(builder.Configuration["ConnectionStrings:DefaultConnection"]));
+
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
@@ -51,6 +56,17 @@ public partial class Program
                 options.SwaggerEndpoint("v1/swagger.json", "Alza Products API v1");
                 options.SwaggerEndpoint("v2/swagger.json", "Alza Products API v2");
             });
+
+            // create DB and seed data
+            await using (var scope = app.Services.CreateAsyncScope())
+            await using (var dbContext = scope.ServiceProvider.GetRequiredService<ProductDbContext>())
+            {
+                // uncomment to delete DB
+                //await dbContext.Database.EnsureDeletedAsync();
+
+                await dbContext.Database.EnsureCreatedAsync();
+                await ProductDbSeeder.SeedAsync(dbContext);
+            }
         }
 
         app.UseHttpsRedirection();
