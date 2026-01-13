@@ -10,5 +10,11 @@ namespace Alza.Products.Domain.Entities
         public string ImgUri { get; set; }
         public decimal Price { get; set; }
         public string? Description { get; set; }
+
+        public void UpdateDescription(string description)
+        {
+            Description = description;
+            UpdateLastModified();
+        }
     }
 }

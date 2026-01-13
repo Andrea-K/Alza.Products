@@ -1,5 +1,11 @@
+using Alza.Products.Application.Exceptions;
+using Alza.Products.Application.Interfaces;
+using Alza.Products.Application.Services;
 using Alza.Products.Infrastructure.Context;
+using Alza.Products.Infrastructure.Repositories;
 using Asp.Versioning;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 
@@ -45,6 +51,9 @@ public partial class Program
         builder.Services.AddDbContext<ProductDbContext>(options => options
             .UseSqlServer(builder.Configuration["ConnectionStrings:DefaultConnection"]));
 
+        builder.Services.AddScoped<IProductService, ProductService>();
+        builder.Services.AddScoped<IProductRepository, ProductRepository>();
+
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
@@ -68,6 +77,34 @@ public partial class Program
                 await ProductDbSeeder.SeedAsync(dbContext);
             }
         }
+
+        // global exception handeling
+        app.UseExceptionHandler(appBuilder =>
+        {
+            appBuilder.Run(async context =>
+            {
+                var exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;
+
+                if (exception is EntityNotFoundException)
+                {
+                    context.Response.StatusCode = StatusCodes.Status404NotFound;
+                    await context.Response.WriteAsJsonAsync(new ProblemDetails
+                    {
+                        Status = 404,
+                        Title = "Not Found",
+                        Detail = exception.Message
+                    });
+                    return;
+                }
+
+                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                await context.Response.WriteAsJsonAsync(new ProblemDetails
+                {
+                    Status = 500,
+                    Title = "Internal Server Error"
+                });
+            });
+        });
 
         app.UseHttpsRedirection();
 
