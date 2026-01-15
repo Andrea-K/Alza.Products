@@ -15,7 +15,6 @@ namespace Alza.Products.Application.Services
             _repository = repository;
         }
 
-        // v1
         public async Task<IEnumerable<ProductDto>> GetAllProductsAsync()
         {
             var products = await _repository.GetAllProductsAsync();
@@ -23,7 +22,6 @@ namespace Alza.Products.Application.Services
             return products.Select(ProductMappings.MapToDto);
         }
 
-        // v2
         public async Task<PagedResult<ProductDto>> GetAllProductsPagedAsync(int page, int pageSize)
         {
             page = page < 1 ? 1 : page;

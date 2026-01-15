@@ -10,5 +10,11 @@ namespace Alza.Products.Infrastructure.Context
         }
 
         public DbSet<Product> Products { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(ProductDbContext).Assembly);
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }

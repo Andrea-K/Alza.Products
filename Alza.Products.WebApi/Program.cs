@@ -1,11 +1,9 @@
-using Alza.Products.Application.Exceptions;
 using Alza.Products.Application.Interfaces;
 using Alza.Products.Application.Services;
 using Alza.Products.Infrastructure.Context;
 using Alza.Products.Infrastructure.Repositories;
+using Alza.Products.WebApi.Filters;
 using Asp.Versioning;
-using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 
@@ -15,9 +13,10 @@ public partial class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Add services to the container.
-
-        builder.Services.AddControllers();
+        builder.Services.AddControllers(options =>
+        {
+            options.Filters.Add(new GlobalExceptionFilter());
+        });
 
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen(options =>
@@ -75,36 +74,10 @@ public partial class Program
 
                 await dbContext.Database.EnsureCreatedAsync();
                 await ProductDbSeeder.SeedAsync(dbContext);
+
+                app.MapGet("/", () => Results.Redirect("/swagger"));
             }
         }
-
-        // global exception handeling
-        app.UseExceptionHandler(appBuilder =>
-        {
-            appBuilder.Run(async context =>
-            {
-                var exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;
-
-                if (exception is EntityNotFoundException)
-                {
-                    context.Response.StatusCode = StatusCodes.Status404NotFound;
-                    await context.Response.WriteAsJsonAsync(new ProblemDetails
-                    {
-                        Status = 404,
-                        Title = "Not Found",
-                        Detail = exception.Message
-                    });
-                    return;
-                }
-
-                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                await context.Response.WriteAsJsonAsync(new ProblemDetails
-                {
-                    Status = 500,
-                    Title = "Internal Server Error"
-                });
-            });
-        });
 
         app.UseHttpsRedirection();
 

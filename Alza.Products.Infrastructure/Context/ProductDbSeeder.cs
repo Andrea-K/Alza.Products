@@ -13,14 +13,13 @@ namespace Alza.Products.Infrastructure.Context
 
             // TODO: maybe change to loading mock data from a file? 
             var products = Enumerable.Range(1, 20).Select(i => new Product
-            {
-                Id = Guid.NewGuid(),
-                Name = $"Product {i}",
-                ImgUri = "https://example.com/image.png",
-                Price = i * 10,
-                Description = "Seeded product",
-                DateCreated = DateTimeOffset.UtcNow,
-            });
+            (
+                Guid.NewGuid(),
+                $"Product {i}",
+                "https://example.com/image.png",
+                 i * 10,
+                "Seeded product"
+            ));
 
             await dbContext.Products.AddRangeAsync(products);
             await dbContext.SaveChangesAsync();

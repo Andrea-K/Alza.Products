@@ -2,7 +2,6 @@
 using Alza.Products.Domain.Entities;
 using Alza.Products.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace Alza.Products.Infrastructure.Repositories
 {
@@ -10,12 +9,11 @@ namespace Alza.Products.Infrastructure.Repositories
     {
         private readonly ProductDbContext _dbContext;
 
-        public ProductRepository(ProductDbContext dbContext, ILogger<ProductRepository> logger)
+        public ProductRepository(ProductDbContext dbContext)
         {
             _dbContext = dbContext;
         }
 
-        // v1
         public async Task<IEnumerable<Product>> GetAllProductsAsync()
         {
             var products = await _dbContext.Products
@@ -26,7 +24,6 @@ namespace Alza.Products.Infrastructure.Repositories
             return products;
         }
 
-        // v2
         public async Task<IEnumerable<Product>> GetAllProductsPagedAsync(int page, int pageSize)
         {
             var products = await _dbContext.Products
@@ -39,7 +36,6 @@ namespace Alza.Products.Infrastructure.Repositories
             return products;
         }
 
-        // v2
         public async Task<int> GetTotalCountAsync()
         {
             return await _dbContext.Products.CountAsync();

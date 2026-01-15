@@ -9,7 +9,7 @@ namespace Alza.Products.WebApi.Controllers
     [ApiVersion("1.0")]
     [ApiVersion("2.0")]
     [Route("api/v{version:apiVersion}/products")]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)] // global err handeling
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public class ProductsController : ControllerBase
     {
         private readonly IProductService _service;
@@ -19,9 +19,6 @@ namespace Alza.Products.WebApi.Controllers
             _service = service;
         }
 
-        /// <summary>
-        /// Returns all products without pagination (api v1)
-        /// </summary>
         [HttpGet]
         [MapToApiVersion("1.0")]
         [ProducesResponseType(typeof(IEnumerable<ProductDto>), StatusCodes.Status200OK)]
@@ -29,47 +26,37 @@ namespace Alza.Products.WebApi.Controllers
         {
             var products = await _service.GetAllProductsAsync();
 
-            return Ok(products); // 200
+            return Ok(products);
         }
 
-        /// <summary>
-        /// Returns paginated list of products (default page size = 10).
-        /// </summary>
         [HttpGet]
         [MapToApiVersion("2.0")]
         [ProducesResponseType(typeof(PagedResult<ProductDto>), StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<ProductDto>>> GetPaged([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        public async Task<ActionResult<IEnumerable<ProductDto>>> GetAllProductsPagedAsync([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
             var products = await _service.GetAllProductsPagedAsync(page, pageSize);
 
-            return Ok(products); // 200
+            return Ok(products);
         }
 
-        /// <summary>
-        /// Returns product by ID
-        /// </summary>
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(ProductDto), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)] // global err handeling
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<ProductDto>> GetProductByIdAsync(Guid id)
         {
             var product = await _service.GetProductByIdAsync(id);
-
-            return Ok(product); // 200
+            return Ok(product);
         }
 
-        /// <summary>
-        /// Updates product description
-        /// </summary>
         [HttpPatch("{id}/description")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)] // dto annotaion
-        [ProducesResponseType(StatusCodes.Status404NotFound)] // global err handeling
-        public async Task<ActionResult<ProductDto>> UpdateProductDescriptionAsync(Guid id, [FromBody] UpdateProductDescriptionDto dto)
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult> UpdateProductDescriptionAsync(Guid id, [FromBody] UpdateProductDescriptionDto dto)
         {
             await _service.UpdateProductDescriptionAsync(id, dto.Description);
 
-            return NoContent(); // 204
+            return NoContent();
         }
     }
 }

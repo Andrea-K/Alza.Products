@@ -1,5 +1,9 @@
 <Solution>
   <Folder Name="/tests/">
+    <Project Path="tests/Alza.Products.Application.Tests/Alza.Products.Application.Tests.csproj" Id="e50d8ab8-5c4d-48ba-8e72-feefb599398c" />
+    <Project Path="tests/Alza.Products.Domain.Tests/Alza.Products.Domain.Tests.csproj" Id="825e731b-f705-4da1-9b9f-21bfbcd05403" />
+    <Project Path="tests/Alza.Products.Infrastructure.Tests/Alza.Products.Infrastructure.Tests.csproj" Id="6e0666bf-0661-421c-b9ac-56fdfae0578b" />
+    <Project Path="tests/Alza.Products.Testing.Common/Alza.Products.Testing.Common.csproj" Id="8527da8b-7739-4960-bce8-f3d691b8fea6" />
     <Project Path="tests/Alza.Products.WebApi.Tests/Alza.Products.WebApi.Tests.csproj" Id="28a120f1-95b2-48ea-b9ff-945276e8cd14" />
   </Folder>
   <Project Path="Alza.Products.Application/Alza.Products.Application.csproj" />
