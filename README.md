@@ -51,7 +51,7 @@ git clone https://github.com/andrea-k/alza.products.git
 cd alza.products
 ```
 
-### 2.  **Create and populate the database**
+### 2.  **Create and populate the database:**
 Inside the `Alza.Products.WebApi` project, open `appsettings.json` file and change the `Database.EnsureCreated` and `Database.EnsureCreated` settings to `true` in order to create the `AlzaProducts` database and populate the `Products` table with seed data:
 ```bash
 "Database": {
