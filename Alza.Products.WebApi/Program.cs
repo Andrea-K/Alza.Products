@@ -6,6 +6,7 @@ using Alza.Products.WebApi.Filters;
 using Asp.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
+using System.Reflection;
 
 public partial class Program
 {
@@ -26,12 +27,16 @@ public partial class Program
                 Title = "Alza Products API",
                 Version = "v1"
             });
-
             options.SwaggerDoc("v2", new OpenApiInfo
             {
                 Title = "Alza Products API",
                 Version = "v2"
             });
+
+            // for reading endpoint comments
+            var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+            options.IncludeXmlComments(xmlPath);
         });
 
         builder.Services
@@ -75,7 +80,7 @@ public partial class Program
                 await dbContext.Database.EnsureCreatedAsync();
                 await ProductDbSeeder.SeedAsync(dbContext);
 
-                app.MapGet("/", () => Results.Redirect("/swagger"));
+                app.MapGet("/", () => Results.Redirect("/swagger")).ExcludeFromDescription();
             }
         }
 
