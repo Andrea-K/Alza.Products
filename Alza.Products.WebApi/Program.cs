@@ -92,8 +92,6 @@ public partial class Program
             app.MapGet("/", () => Results.Redirect("/swagger")).ExcludeFromDescription();
         }
 
-        app.UseHttpsRedirection();
-
         app.UseAuthorization();
 
         app.MapControllers();
