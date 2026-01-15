@@ -1,5 +1,6 @@
 using Alza.Products.Application.Interfaces;
 using Alza.Products.Application.Services;
+using Alza.Products.Infrastructure.Configuration;
 using Alza.Products.Infrastructure.Context;
 using Alza.Products.Infrastructure.Repositories;
 using Alza.Products.WebApi.Filters;
@@ -60,7 +61,6 @@ public partial class Program
 
         var app = builder.Build();
 
-        // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
@@ -70,18 +70,26 @@ public partial class Program
                 options.SwaggerEndpoint("v2/swagger.json", "Alza Products API v2");
             });
 
-            // create DB and seed data
-            await using (var scope = app.Services.CreateAsyncScope())
+            var dbInitOptions = app.Configuration
+                .GetSection("Database")
+                .Get<DatabaseInitializationOptions>();
+
+            await using var scope = app.Services.CreateAsyncScope();
             await using (var dbContext = scope.ServiceProvider.GetRequiredService<ProductDbContext>())
             {
-                // uncomment to delete DB
-                //await dbContext.Database.EnsureDeletedAsync();
+                if (dbInitOptions?.EnsureDeleted == true)
+                    await dbContext.Database.EnsureDeletedAsync();
 
-                await dbContext.Database.EnsureCreatedAsync();
-                await ProductDbSeeder.SeedAsync(dbContext);
+                if (dbInitOptions?.EnsureCreated == true)
+                {
+                    await dbContext.Database.EnsureCreatedAsync();
 
-                app.MapGet("/", () => Results.Redirect("/swagger")).ExcludeFromDescription();
+                    if (dbInitOptions?.SeedData == true)
+                        await ProductDbSeeder.SeedAsync(dbContext);
+                }
             }
+
+            app.MapGet("/", () => Results.Redirect("/swagger")).ExcludeFromDescription();
         }
 
         app.UseHttpsRedirection();
