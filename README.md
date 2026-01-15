@@ -17,7 +17,7 @@ The solution follows clean architecture and it is separated into 4 layers:
 
 *  **`Alza.Products.Domain`**: The core of the application. It contains the domain entities, such as the `Product` class.
 
-*  **`Alza.Products.Application`**: Contains the application logic. It defines interfaces (`IProductRepository`, `IProductService`) and implements services (`ProductService`) that orchestrate the domain objects to perform business operations. It also includes Data Transfer Objects (DTOs) for communicating with the presentation layer.
+*  **`Alza.Products.Application`**: Contains the application logic. It defines interfaces (`IProductRepository`, `IProductService`) and services (`ProductService`) that orchestrate the domain objects to perform business operations. It also includes Data Transfer Objects (DTOs) for communicating with the presentation layer.
 
 *  **`Alza.Products.Infrastructure`**: Implements the data access logic defined in the Application layer. It uses Entity Framework Core to interact with the database (`ProductDbContext`, `ProductRepository`). It also handles database seeding.
 
@@ -35,7 +35,7 @@ This application supports optional database creation/deletion and data seeding c
   }
 ```
 * `EnsureDeleted`:  When enabled, the database gets deleted on startup, if it exists (as the first step in this pipeline).
-* `EnsureCreated`: When enabled, the application ensures the database schema is created on startup, if it doesn't already exist. (as the second step).
+* `EnsureCreated`: When enabled, the application ensures the database schema is created on startup, if it doesn't already exist (as the second step).
 * `SeedData`: When enabled, initial sample data is inserted into the database on startup (as the third step). The data will only get populated if EnsureCreated is also set to true.
 
 
@@ -52,7 +52,7 @@ cd alza.products
 ```
 
 ### 2.  **Create and populate the database**
-Inside the `Alza.Products.WebApi` project, open`appsettings.json` file and change the `Database.EnsureCreated` and `Database.EnsureCreated` settings to `true`order to create the `AlzaProducts` database and populate the `Products` table with seed data:
+Inside the `Alza.Products.WebApi` project, open `appsettings.json` file and change the `Database.EnsureCreated` and `Database.EnsureCreated` settings to `true` in order to create the `AlzaProducts` database and populate the `Products` table with seed data:
 ```bash
 "Database": {
 	"EnsureDeleted": false,
@@ -66,7 +66,7 @@ Optionally, you can also modify `ConnectionStrings.DefaultConnection`:
   "DefaultConnection": "Server=(localdb)\\MSSQLLocalDB;Database=AlzaProducts;Trusted_Connection=True"
 },
 ```
-(You can find a list of SQL local DB instances on your machine with this termial command):
+(You can find a list of SQL local DB instances on your machine with this command):
 ```bash
 sqllocaldb i
 ```
@@ -82,12 +82,12 @@ Once the application is running, it will automatically create and seed the `Alza
 
 
 ## API Endpoints
-The following endpoints are available. Detailed documentation is available at `https://localhost:5106/swagger`.
+The following endpoints are available. Detailed documentation is available at `http://localhost:5106/swagger`.
 
-*  **GET**  `/api/v1/products`
-*  **GET**  `/api/v2/products`
-*  **GET**  `/api/v{version}/products/{id}`
-*  **PATCH**  `/api/v{version}/products/{id}/description`
+*  **GET**  `/api/v1/products`   For retrieving a complete list of all products.
+*  **GET**  `/api/v2/products`   For retrieving a paginated list of products.
+*  **GET**  `/api/v{version}/products/{id}`   For retrieving a single product by ID.
+*  **PATCH**  `/api/v{version}/products/{id}/description`   For updating the description of an existing product.
 
 
 ## Testing
